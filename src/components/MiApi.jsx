@@ -1,29 +1,16 @@
-import React, { useEffect, useState } from "react";
-import Header from "./Header";
+import { useEffect, useState } from "react";
 import PokemonInfo from "./PokemonInfo";
 import PokemonList from "./PokemonList";
 import Search from "./Search";
 import ClipLoader from "react-spinners/ClipLoader"
-import Footer from "./Footer";
+
 
 const MiApi = () => {
   const [pokemonList, setPokemonList] = useState([])
   const [pokemonListFilt, setPokemonListFilter] = useState([])
   const [pokeData, setPokeData] = useState();
   const [loadingPokemonList, setLoadingPokemonList] = useState(false)
-  const [loadingPokemonInfo, setLoadingPokemonInfo] = useState(false)
 
-
-  const getPokemons = async () => {
-    try {
-      // setLoadPokemon(`https://pokeapi.co/api/v2/pokemon?limit=906&offset=0`)
-      const response = await fetch("https://pokeapi.co/api/v2/pokemon?limit=905&offset=0");
-      const data = await response.json();
-      return data;
-    } catch (err) {
-
-    }
-  }
 
   const getPokemonData = async (url) => {
     try {
@@ -33,6 +20,15 @@ const MiApi = () => {
     } catch (err) { }
   };
 
+  const getPokemons = async () => {
+    try {
+      const response = await fetch("https://pokeapi.co/api/v2/pokemon?limit=151&offset=0");
+      const data = await response.json();
+      return data;
+    } catch (err) {
+      throw err
+    }
+  }
   const fetchPokemons = async () => {
     try {
       setLoadingPokemonList(true)
@@ -44,15 +40,15 @@ const MiApi = () => {
       setPokemonList(results);
       setPokemonListFilter(results)
       setLoadingPokemonList(false)
-    } catch (err) { }
+    } catch (err) {
+      throw err
+    }
   };
 
+
   useEffect(() => {
-    fetchPokemons();
-    setPokeData();
-
+    fetchPokemons()
   }, [])
-
 
 
   const handleSearch = (e) => {
@@ -73,42 +69,32 @@ const MiApi = () => {
   const handleSort = (key) => {
     const sortPokemonList = [...pokemonListFilt].sort((poke1, poke2) => (poke1[key] > poke2[key]) ? 1 : (poke1[key] < poke2[key]) ? -1 : 0);
     setPokemonListFilter(sortPokemonList);
-    console.log(sortPokemonList);
   }
 
   const handlePokeInfo = (pokemon) => {
-    setLoadingPokemonInfo(true);
     setPokeData(pokemon);
-    setLoadingPokemonInfo(false);
   }
 
 
   return (
     <div className="bg-gray">
-      <Header />
       <Search handleSearch={handleSearch} />
-      <button className="btn btn-dark" onClick={() => handleSort("name")}>Sort by Name A{"->"}Z</button>
-      <button className="btn btn-dark" onClick={() => handleSort("id")}>Sort by ID</button>
+      <div className="btn-group">
+        <button className="btn btn-dark" onClick={() => handleSort("name")}>Sort by Name A{"->"}Z</button>
+        <button className="btn btn-dark" onClick={() => handleSort("id")}>Sort by ID</button>
+      </div>
       <div className="d-flex pokedex-container ">
         {loadingPokemonList ? (
           <div className="loader">
-            <ClipLoader size="250px" color="#36d7b7" loading={loadingPokemonList} />
+            <ClipLoader size="250px" color="#e22121" loading={loadingPokemonList} />
           </div>
         ) : (
-          <>
-
-
-            <PokemonList pokemons={pokemonListFilt} className="pokedex-grid"
-              pokeInfo={handlePokeInfo} />
-
-          </>
-
+          <PokemonList pokemons={pokemonListFilt} className="pokedex-grid"
+            pokeInfo={handlePokeInfo} />
         )
         }
         <PokemonInfo pokeDatos={pokeData} />
       </div>
-
-      <Footer />
     </div>
   )
 }

@@ -19,19 +19,17 @@ const PokemonInfo = ({ pokeDatos }) => {
                 })
                 }
               </div>
-              <ul className="card-text base-stats">
-                {
-                  pokeDatos.stats.map((stat, idx) => {
+              <div className="text-start d-flex justify-content-center">
+                <ul className="card-text base-stats">
+                  {pokeDatos.stats.map((stat, idx) => {
                     return (
-                      <li key={idx}>{stat.stat.name}:{stat.base_stat}</li>
-
+                      <li key={idx}>{stat.stat.name}: {stat.base_stat}</li>
                     )
                   })
-                }
-              </ul>
-
+                  }
+                </ul>
+              </div>
             </div>
-
           </div>
         )
       }
