@@ -29,6 +29,7 @@ const MiApi = () => {
       throw err
     }
   }
+
   const fetchPokemons = async () => {
     try {
       setLoadingPokemonList(true)
