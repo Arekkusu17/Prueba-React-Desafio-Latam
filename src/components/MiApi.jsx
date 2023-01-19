@@ -4,12 +4,15 @@ import PokemonInfo from "./PokemonInfo";
 import PokemonList from "./PokemonList";
 import Search from "./Search";
 import ClipLoader from "react-spinners/ClipLoader"
+import Footer from "./Footer";
 
 const MiApi = () => {
   const [pokemonList, setPokemonList] = useState([])
   const [pokemonListFilt, setPokemonListFilter] = useState([])
   const [pokeData, setPokeData] = useState();
-  const [loading, setLoading] = useState(false)
+  const [loadingPokemonList, setLoadingPokemonList] = useState(false)
+  const [loadingPokemonInfo, setLoadingPokemonInfo] = useState(false)
+
 
   const getPokemons = async () => {
     try {
@@ -32,7 +35,7 @@ const MiApi = () => {
 
   const fetchPokemons = async () => {
     try {
-      setLoading(true)
+      setLoadingPokemonList(true)
       const data = await getPokemons();
       const promises = data.results.map(async (pokemon) => {
         return await getPokemonData(pokemon.url);
@@ -40,14 +43,13 @@ const MiApi = () => {
       const results = await Promise.all(promises);
       setPokemonList(results);
       setPokemonListFilter(results)
-      setLoading(false)
+      setLoadingPokemonList(false)
     } catch (err) { }
   };
 
   useEffect(() => {
-
     fetchPokemons();
-
+    setPokeData();
 
   }, [])
 
@@ -74,21 +76,30 @@ const MiApi = () => {
     console.log(sortPokemonList);
   }
 
+  const handlePokeInfo = (pokemon) => {
+    setLoadingPokemonInfo(true);
+    setPokeData(pokemon);
+    setLoadingPokemonInfo(false);
+  }
+
 
   return (
-    <div>
+    <div className="bg-gray">
       <Header />
       <Search handleSearch={handleSearch} />
-      <div className="d-flex ">
-        {loading ? (
+      <button className="btn btn-dark" onClick={() => handleSort("name")}>Sort by Name A{"->"}Z</button>
+      <button className="btn btn-dark" onClick={() => handleSort("id")}>Sort by ID</button>
+      <div className="d-flex pokedex-container ">
+        {loadingPokemonList ? (
           <div className="loader">
-            <ClipLoader size="300" color="#36d7b7" loading={loading} />
+            <ClipLoader size="250px" color="#36d7b7" loading={loadingPokemonList} />
           </div>
         ) : (
           <>
 
 
-            <PokemonList pokemons={pokemonListFilt} className="pokedex-grid" pokeInfo={pokemon => setPokeData(pokemon)} />
+            <PokemonList pokemons={pokemonListFilt} className="pokedex-grid"
+              pokeInfo={handlePokeInfo} />
 
           </>
 
@@ -96,9 +107,8 @@ const MiApi = () => {
         }
         <PokemonInfo pokeDatos={pokeData} />
       </div>
-      <button className="btn btn-primary" onClick={() => handleSort("name")}>Sort by Name A{"->"}Z</button>
-      <button className="btn btn-primary" onClick={() => handleSort("id")}>Sort by ID</button>
 
+      <Footer />
     </div>
   )
 }

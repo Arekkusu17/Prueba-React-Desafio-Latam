@@ -5,11 +5,11 @@ const PokemonInfo = ({ pokeDatos }) => {
     <>
       {
         (!pokeDatos) ? "" : (
-          <div className="pokemon-info text-center">
+          <div className={`pokemon-info text-center ${pokeDatos.types[0].type.name}`}>
             <img src={pokeDatos.sprites.other['official-artwork'].front_default} className="img-fluid poke-info-img" alt="..." />
-            <div className="card-body ">
+            <div className="poke-info-body card-body ">
               <h5 className="card-title"><strong>#{pokeDatos.id}</strong> - {pokeDatos.name}</h5>
-              <div className="card-text">
+              <div className="poke-info-text card-text">
                 {pokeDatos.types.map((type, idx) => {
                   return (
                     <div key={idx} className="pokemon-type-text ">
